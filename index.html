@@ -2,6 +2,7 @@
     © 2025 Cassandra Harrison/AvaBleu Design LTD Liability Company – Proprietary Platform • Public Demo Only
 </div>
 console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public demonstration only. Core systems are closed-source and proprietary.', 'font-size:14px; color:#e11d48');
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,6 +43,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
         .fusion-label { font-size: 12px; color: #666; }
         .chart-container { height: 200px; margin: 20px 0; }
         .watermark { position: fixed; bottom: 10px; right: 10px; opacity: 0.5; font-size: 10px; color: #666; }
+        .error-message { color: #dc2626; text-align: center; margin: 20px; }
     </style>
 </head>
 <body>
@@ -57,7 +59,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
         </div>
     </div>
     <div class="container">
-        <!-- Key Metrics (Mock for now; tie to real data later) -->
+        <!-- Key Metrics -->
         <div class="metrics">
             <div class="metric-box">
                 <div class="metric-value" style="color: #10b981;">3-8s</div>
@@ -153,6 +155,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
         async function fetchTrials() {
             try {
                 const response = await fetch('https://clinicaltrials.gov/api/v2/studies?query.cond=Oncology&recrs.a=Recruiting&phase=1,2,3&size=20&fmt=json');
+                if (!response.ok) throw new Error('API request failed');
                 const data = await response.json();
                 trials = data.studies || [];
                 trialCount = trials.length;
@@ -161,7 +164,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
                 console.log('Fetched', trialCount, 'real oncology trials');
             } catch (error) {
                 console.error('API Error:', error);
-                document.getElementById('protocol-list').innerHTML = '<p>Error loading trials. Using mock data.</p>';
+                document.getElementById('protocol-list').innerHTML = '<p class="error-message">Error loading trials from ClinicalTrials.gov. Please check your connection and try again.</p>';
             }
         }
 
@@ -169,19 +172,28 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
         function updateDisplay() {
             const list = document.getElementById('protocol-list');
             list.innerHTML = '';
+            if (trials.length === 0) {
+                list.innerHTML = '<p class="error-message">No trials loaded yet.</p>';
+                return;
+            }
             trials.slice(0, 8).forEach(trial => {
                 const div = document.createElement('div');
                 div.className = 'protocol-item';
-                const patients = trial.enrollmentCount || 'N/A';
-                const phase = trial.phaseName || 'Phase Unknown';
-                const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock for now
+                const protocol = trial.protocolSection || {};
+                const idModule = protocol.identificationModule || {};
+                const statusModule = protocol.statusModule || {};
+                const sponsorModule = protocol.sponsorCollaboratorsModule || {};
+                const designModule = protocol.designModule || {};
+                const patients = designModule.enrollmentInfo?.count || 'N/A';
+                const phase = (designModule.studyType === 'INTERVENTIONAL' ? designModule.designInfo?.interventionModel : 'Phase Unknown') || 'Phase Unknown';
+                const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock for now; replace with real calc later
                 div.innerHTML = `
                     <div class="protocol-info">
-                        <div class="protocol-id">NCT${trial.nctId}</div>
-                        <div class="protocol-title">${trial.briefTitle || 'Title N/A'}</div>
-                        <div class="protocol-details">${trial.sponsor?.name || 'Sponsor N/A'} • ${phase} • ${patients} patients • ${cost}</div>
+                        <div class="protocol-id">${idModule.nctId || 'NCT Unknown'}</div>
+                        <div class="protocol-title">${idModule.briefTitle || 'Title N/A'}</div>
+                        <div class="protocol-details">${sponsorModule.leadSponsor?.name || 'Sponsor N/A'} • ${phase} • ${patients} patients • ${cost}</div>
                     </div>
-                    <button class="analyze-btn" onclick="analyze('${trial.nctId}')">Analyze</button>
+                    <button class="analyze-btn" onclick="analyze('${idModule.nctId || ''}')">Analyze</button>
                 `;
                 list.appendChild(div);
             });
@@ -191,7 +203,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
         function analyze(id) {
             const results = document.getElementById('analysis-results');
             results.style.display = 'block';
-            document.getElementById('analyzed-id').textContent = id;
+            document.getElementById('analyzed-id').textContent = id || 'Unknown';
 
             // Simulate enhanced analysis
             setTimeout(() => {
@@ -229,7 +241,7 @@ console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public de
             setInterval(() => {
                 document.getElementById('load').textContent = Math.floor(Math.random() * 15) + 5;
             }, 5000);
-            console.log('NT360 RealTime Initialized – © 2025 Confidential Prototype');
+            console.log('%c NT360 RealTime Initialized – © 2025 Confidential Prototype', 'font-size:14px; color:#1e40af');
             console.log('- Real NCT API integration active');
             console.log('- Extend with backend for full fusion');
         }
