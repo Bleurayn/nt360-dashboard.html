@@ -42,6 +42,6 @@ The NT360 name, branding, architecture, algorithms, and commercial platform are 
 ### Contact & Partnerships
 Want to pilot the real platform, invest, or integrate?  
 Reach out: charrison@avableudesigns.com or schedule a demo at https://calendly.com/cassandrahrrsn9/30min
-
+https://doi.org/10.5281/zenodo.17881936
 ---
 Built with ❤️ for the future of faster, cheaper, and more transparent clinical trials.
