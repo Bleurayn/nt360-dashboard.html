@@ -1,7 +1,7 @@
 # nt360-dashboard.html
 # NT360 RealTime Clinical Intelligence — Public Prototype (v1.0)
 
-**Live demo**: https://bleurayn.github.io/nt360-realtime-clinical-intelligence  
+**Live demo**: https://bleurayn.github.io/nt360-dashboard.html  
 **Live version**: Open `nt360-dashboard.html` in any browser
 
 ### What this public repository contains
