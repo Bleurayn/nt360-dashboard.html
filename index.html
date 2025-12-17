@@ -9,17 +9,32 @@
         .header { text-align: center; margin-bottom: 30px; padding: 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .header h1 { margin: 0; color: #1e40af; }
         .header p { margin: 10px 0; }
-        .metrics { display: flex; justify-content: space-around; margin: 20px 0; }
-        .metric-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .powered-by { 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            color: #1e40af; 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #eef2ff; 
+            border-left: 5px solid #1e40af; 
+            border-radius: 4px; 
+        }
+        .metrics { display: flex; justify-content: space-around; flex-wrap: wrap; margin: 20px 0; }
+        .metric-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; min-width: 150px; margin: 10px; }
         .metric-value { font-size: 24px; font-weight: bold; }
-        .protocol-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .protocol-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .protocol-info { flex: 1; }
+        .protocol-id { font-weight: bold; color: #1e40af; }
+        .protocol-title { font-weight: bold; margin: 5px 0; }
+        .protocol-details { font-size: 0.9em; color: #6b7280; }
         .analyze-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        .analyze-btn:hover { background: #059669; }
         .error-message { color: #dc2626; text-align: center; margin: 20px; }
-        /* Add your existing styles here (e.g., .fusion-label, .chart-container, .watermark) */
+        .footer { text-align: center; margin-top: 40px; font-size: 0.8em; color: #6b7280; }
     </style>
 </head>
 <body>
-    <div>© 2025 Cassandra Harrison/AvaBleu Design LTD Liability Company – Proprietary Platform • Public Demo Only</div>
+    <div class="footer">© 2025 Cassandra Harrison/AvaBleu Design LTD Liability Company – Proprietary Platform • Public Demo Only</div>
 
     <script>
         console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public demonstration only. Core systems are closed-source and proprietary.', 'font-size:14px; color:#e11d48');
@@ -32,9 +47,14 @@
     <div class="header">
         <h1>NT360 RealTime Clinical Intelligence</h1>
         <p>This deposit contains the <strong>public frontend prototype</strong> (single HTML file) of NT360 RealTime Clinical Intelligence – a next-generation clinical-trial monitoring and predictive-analytics platform.</p>
+        
+        <div class="powered-by">
+            Powered by Act – the best software in the world for QA/QC
+        </div>
+        
         <p><strong>What is included:</strong></p>
         <ul>
-            <li>Standalone, client-side dashboard with live integration to the public ClinicalTrials.gov API (v2, 2025)</li>
+            <li>Standalone, client-side dashboard with live integration to the public ClinicalTrials.gov API (v2, August 2025)</li>
             <li>Responsive UI with real-time trial streaming and basic analytics visualization</li>
         </ul>
         <p><em>Core predictive engines and full datasets are proprietary and closed-source.</em></p>
@@ -47,16 +67,22 @@
                 <div class="metric-value" style="color: #10b981;">3-8s</div>
                 <div>Avg Query Resolution</div>
             </div>
-            <!-- Add other metrics as in your original -->
+            <div class="metric-box">
+                <div class="metric-value" style="color: #1e40af;">Live</div>
+                <div>API Status</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" style="color: #f59e0b;">20</div>
+                <div>Trials Displayed</div>
+            </div>
         </div>
 
-        <h2>Trial Analysis</h2>
+        <h2>Live Recruiting Oncology Trials (Phases 1–3)</h2>
         <div id="protocol-list"></div>
 
-        <div id="analysis-results" style="display:none;">
-            <!-- Your existing analysis results template -->
+        <div id="analysis-results" style="display:none; margin-top: 30px;">
             <h2>Analysis for <span id="analyzed-id"></span></h2>
-            <!-- ... -->
+            <p>Basic client-side analysis simulation will go here in the full prototype.</p>
         </div>
     </div>
 
@@ -70,6 +96,7 @@
                 const data = await response.json();
                 trials = data.studies || [];
                 console.log('Fetched', trials.length, 'real recruiting oncology trials (Phases 1-3)');
+                updateDisplay();
             } catch (error) {
                 console.error('API Error:', error);
                 document.getElementById('protocol-list').innerHTML = '<p class="error-message">Error loading trials from ClinicalTrials.gov. Please check your connection and try again.</p>';
@@ -96,22 +123,24 @@
                 const nctId = idModule.nctId || 'NCT Unknown';
                 const title = idModule.briefTitle || idModule.officialTitle || 'Title N/A';
                 const sponsor = sponsorModule.leadSponsor?.name || 'Sponsor N/A';
-                
+
                 let phase = 'Phase Unknown';
                 if (designModule.phases && designModule.phases.length > 0) {
                     phase = designModule.phases.join(', ');
                 }
 
                 const patients = designModule.enrollmentInfo?.count || 'N/A';
-                const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock
+                const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock estimated cost
 
-                function esc(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                function esc(str) { 
+                    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); 
+                }
 
                 div.innerHTML = `
                     <div class="protocol-info">
                         <div class="protocol-id">${esc(nctId)}</div>
                         <div class="protocol-title">${esc(title)}</div>
-                        <div class="protocol-details">${esc(sponsor)} • ${esc(phase)} • ${patients} patients • ${cost}</div>
+                        <div class="protocol-details">${esc(sponsor)} • ${esc(phase)} • ${patients} patients • Est. ${cost}</div>
                     </div>
                     <button class="analyze-btn" onclick="analyze('${esc(nctId)}')">Analyze</button>
                 `;
@@ -123,13 +152,11 @@
             const results = document.getElementById('analysis-results');
             results.style.display = 'block';
             document.getElementById('analyzed-id').textContent = id || 'Unknown';
-            // Your existing simulation code here
+            // Placeholder for future detailed analysis
         }
 
-        // Initialize
-        fetchTrials().then(updateDisplay);
-
-        // Your existing intervals/simulations here
+        // Initialize on load
+        window.onload = fetchTrials;
     </script>
 </body>
 </html>
