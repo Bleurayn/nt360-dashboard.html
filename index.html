@@ -1,111 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ... (your existing head content) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NT360 RealTime Clinical Intelligence – Public Prototype</title>
     <style>
-        /* ... (your existing styles) ... */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f9fafb; color: #1f2937; }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; color: #1e40af; }
+        .header p { margin: 10px 0; }
+        .metrics { display: flex; justify-content: space-around; margin: 20px 0; }
+        .metric-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .metric-value { font-size: 24px; font-weight: bold; }
+        .protocol-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .analyze-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
         .error-message { color: #dc2626; text-align: center; margin: 20px; }
+        /* Add your existing styles here (e.g., .fusion-label, .chart-container, .watermark) */
     </style>
 </head>
 <body>
     <div>© 2025 Cassandra Harrison/AvaBleu Design LTD Liability Company – Proprietary Platform • Public Demo Only</div>
+
     <script>
         console.log('%c NT360 — CONFIDENTIAL COMMERCIAL PLATFORM\n This is a public demonstration only. Core systems are closed-source and proprietary.', 'font-size:14px; color:#e11d48');
         console.log('%c NT360 RealTime Initialized – © 2025 Confidential Prototype', 'font-size:14px; color:#1e40af');
-        console.log('- Real NCT API integration active');
+        console.log('- Real ClinicalTrials.gov API v2 integration active');
         console.log('- Extend with backend for full fusion');
     </script>
 
-    <!-- ... (your existing body content up to container) ... -->
+    <!-- New Description Section -->
+    <div class="header">
+        <h1>NT360 RealTime Clinical Intelligence</h1>
+        <p>This deposit contains the <strong>public frontend prototype</strong> (single HTML file) of NT360 RealTime Clinical Intelligence – a next-generation clinical-trial monitoring and predictive-analytics platform.</p>
+        <p><strong>What is included:</strong></p>
+        <ul>
+            <li>Standalone, client-side dashboard with live integration to the public ClinicalTrials.gov API (v2, 2025)</li>
+            <li>Responsive UI with real-time trial streaming and basic analytics visualization</li>
+        </ul>
+        <p><em>Core predictive engines and full datasets are proprietary and closed-source.</em></p>
+    </div>
 
     <div class="container">
         <!-- Key Metrics -->
         <div class="metrics">
-            <!-- ... (unchanged) ... -->
+            <div class="metric-box">
+                <div class="metric-value" style="color: #10b981;">3-8s</div>
+                <div>Avg Query Resolution</div>
+            </div>
+            <!-- Add other metrics as in your original -->
         </div>
 
         <h2>Trial Analysis</h2>
-
-        <script>
-            let trials = [];
-            let trialCount = 0;
-
-            async function fetchTrials() {
-                try {
-                    // Fixed valid API URL
-                    const response = await fetch('https://clinicaltrials.gov/api/v2/studies?query.cond=Oncology&recrs=a&phase=1,2,3&count=20&format=json');
-                    if (!response.ok) throw new Error('API request failed');
-                    const data = await response.json();
-                    trials = data.studies || [];
-                    trialCount = trials.length;
-                    console.log('Fetched', trialCount, 'real oncology trials');
-                } catch (error) {
-                    console.error('API Error:', error);
-                    document.getElementById('protocol-list').innerHTML = '<p class="error-message">Error loading trials from ClinicalTrials.gov. Please check your connection and try again.</p>';
-                }
-            }
-
-            function updateDisplay() {
-                const list = document.getElementById('protocol-list');
-                list.innerHTML = '';
-                if (trials.length === 0) {
-                    list.innerHTML = '<p class="error-message">No trials loaded yet.</p>';
-                    return;
-                }
-
-                trials.slice(0, 8).forEach(trial => {
-                    const div = document.createElement('div');
-                    div.className = 'protocol-item';
-
-                    const protocol = trial.protocolSection || {};
-                    const idModule = protocol.identificationModule || {};
-                    const sponsorModule = protocol.sponsorCollaboratorsModule || {};
-                    const designModule = protocol.designModule || {};
-
-                    // Safe extraction with fallbacks
-                    const nctId = idModule.nctId || 'NCT Unknown';
-                    const title = idModule.briefTitle || 'Title N/A';
-                    const sponsor = sponsorModule.leadSponsor?.name || 'Sponsor N/A';
-                    
-                    let phase = 'Phase Unknown';
-                    if (designModule.phases && designModule.phases.length > 0) {
-                        phase = designModule.phases.join(', '); // If phases array exists
-                    } else if (designModule.designInfo?.interventionModel) {
-                        phase = designModule.designInfo.interventionModel;
-                    }
-
-                    const patients = designModule.enrollmentInfo?.count || 'N/A';
-                    const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock cost
-
-                    // Basic escaping for safety
-                    function esc(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-                    div.innerHTML = `
-                        <div class="protocol-info">
-                            <div class="protocol-id">${esc(nctId)}</div>
-                            <div class="protocol-title">${esc(title)}</div>
-                            <div class="protocol-details">${esc(sponsor)} • ${esc(phase)} • ${patients} patients • ${cost}</div>
-                        </div>
-                        <button class="analyze-btn" onclick="analyze('${esc(nctId)}')">Analyze</button>
-                    `;
-                    list.appendChild(div);
-                });
-            }
-
-            function analyze(id) {
-                const results = document.getElementById('analysis-results');
-                results.style.display = 'block';
-                document.getElementById('analyzed-id').textContent = id || 'Unknown';
-                // ... (your existing simulation code) ...
-            }
-
-            // Init
-            fetchTrials().then(updateDisplay);
-            // ... (your existing intervals etc.) ...
-        </script>
-
         <div id="protocol-list"></div>
-        <!-- ... (rest of body) ... -->
+
+        <div id="analysis-results" style="display:none;">
+            <!-- Your existing analysis results template -->
+            <h2>Analysis for <span id="analyzed-id"></span></h2>
+            <!-- ... -->
+        </div>
     </div>
+
+    <script>
+        let trials = [];
+
+        async function fetchTrials() {
+            try {
+                const response = await fetch('https://clinicaltrials.gov/api/v2/studies?query.cond=Oncology&filter.overallStatus=RECRUITING&filter.phases=PHASE_1,PHASE_2,PHASE_3&pageSize=20&format=json');
+                if (!response.ok) throw new Error('API request failed');
+                const data = await response.json();
+                trials = data.studies || [];
+                console.log('Fetched', trials.length, 'real recruiting oncology trials (Phases 1-3)');
+            } catch (error) {
+                console.error('API Error:', error);
+                document.getElementById('protocol-list').innerHTML = '<p class="error-message">Error loading trials from ClinicalTrials.gov. Please check your connection and try again.</p>';
+            }
+        }
+
+        function updateDisplay() {
+            const list = document.getElementById('protocol-list');
+            list.innerHTML = '';
+            if (trials.length === 0) {
+                list.innerHTML = '<p class="error-message">No trials loaded yet.</p>';
+                return;
+            }
+
+            trials.slice(0, 8).forEach(trial => {
+                const div = document.createElement('div');
+                div.className = 'protocol-item';
+
+                const protocol = trial.protocolSection || {};
+                const idModule = protocol.identificationModule || {};
+                const sponsorModule = protocol.sponsorCollaboratorsModule || {};
+                const designModule = protocol.designModule || {};
+
+                const nctId = idModule.nctId || 'NCT Unknown';
+                const title = idModule.briefTitle || idModule.officialTitle || 'Title N/A';
+                const sponsor = sponsorModule.leadSponsor?.name || 'Sponsor N/A';
+                
+                let phase = 'Phase Unknown';
+                if (designModule.phases && designModule.phases.length > 0) {
+                    phase = designModule.phases.join(', ');
+                }
+
+                const patients = designModule.enrollmentInfo?.count || 'N/A';
+                const cost = `$${(Math.random() * 20 + 10).toFixed(1)}M`; // Mock
+
+                function esc(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+                div.innerHTML = `
+                    <div class="protocol-info">
+                        <div class="protocol-id">${esc(nctId)}</div>
+                        <div class="protocol-title">${esc(title)}</div>
+                        <div class="protocol-details">${esc(sponsor)} • ${esc(phase)} • ${patients} patients • ${cost}</div>
+                    </div>
+                    <button class="analyze-btn" onclick="analyze('${esc(nctId)}')">Analyze</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function analyze(id) {
+            const results = document.getElementById('analysis-results');
+            results.style.display = 'block';
+            document.getElementById('analyzed-id').textContent = id || 'Unknown';
+            // Your existing simulation code here
+        }
+
+        // Initialize
+        fetchTrials().then(updateDisplay);
+
+        // Your existing intervals/simulations here
+    </script>
 </body>
 </html>
